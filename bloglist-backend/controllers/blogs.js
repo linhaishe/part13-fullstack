@@ -2,6 +2,7 @@ import { Router } from "express";
 import { Blog, User } from "../models/index.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { Op } from "sequelize";
 
 const router = Router();
 dotenv.config();
@@ -15,6 +16,12 @@ const blogFinder = async (req, res, next) => {
 
 router.get("/", async (req, res) => {
   try {
+    const where = {};
+    if (req.query.search) {
+      where.title = {
+       [Op.iLike]: `%${req.query.search}%`
+      };
+    }
     const blogs = await Blog.findAll({
       // add to each note information about the user who added it
       attributes: { exclude: ["userId"] },
@@ -22,6 +29,7 @@ router.get("/", async (req, res) => {
         model: User,
         attributes: ["name"],
       },
+      where,
     });
     res.json(blogs);
   } catch (err) {
