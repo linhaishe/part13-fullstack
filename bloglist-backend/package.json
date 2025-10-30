@@ -1,33 +1,17 @@
 {
-  "name": "bloglistbackend",
+  "name": "bloglist-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "bloglist-backend was copy form part4 project 此项目将不会使用mongodb数据库，改用relational database - postgres",
   "main": "index.js",
-  "type": "module",
   "scripts": {
-    "start": "cross-env NODE_ENV=production node index.js",
-    "dev": "cross-env NODE_ENV=development nodemon index.js",
-    "lint": "eslint .",
-    "test": "node --experimental-vm-modules node_modules/.bin/jest",
-    "start:test": "cross-env NODE_ENV=test node --watch index.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "MIT",
+  "license": "ISC",
   "dependencies": {
-    "bcrypt": "^6.0.0",
-    "cors": "^2.8.5",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "express-async-errors": "^3.1.1",
-    "jsonwebtoken": "^9.0.2",
-    "mongodb": "^6.19.0",
-    "mongoose": "^8.3.4"
-  },
-  "devDependencies": {
-    "cross-env": "^7.0.3",
-    "eslint": "^7.17.0",
-    "jest": "^30.1.2",
-    "nodemon": "^2.0.7",
-    "supertest": "^6.1.3"
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "pg": "^8.16.3",
+    "sequelize": "^6.37.7"
   }
 }

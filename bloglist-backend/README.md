@@ -1,6 +1,7 @@
 # basic info
 
-bloglist-backend was copy form part4 project
+bloglist-backend was similar to part4 project
+此项目将不会使用mongodb数据库，改用relational database - postgres
 
 env files needs following things:
 
@@ -19,3 +20,11 @@ for project:
   "password": "chenruotestpwd"
 }
 ```
+ install devs
+```
+npm install express dotenv pg sequelize
+```
+
+ [sequelize](https://sequelize.org/master/) is the library through which we use Postgres. 
+
+用这个中间件操作/链接数据库
