@@ -3,9 +3,11 @@ import Blog from "../models/index.js";
 const router = Router();
 
 const blogFinder = async (req, res, next) => {
-  req.note = await Blog.findByPk(req.params.id);
-  next();
-};
+  const blog = await Blog.findByPk(req.params.id)
+  if (!blog) return res.status(404).json({ error: "Blog not found" })
+  req.blog = blog
+  next()
+}
 
 router.get("/", async (req, res) => {
   try {
@@ -53,6 +55,27 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+router.put("/:id", blogFinder, async (req, res) => {
+  try {
+    const { author, title, url, likes } = req.body
+    const blog = req.blog
+
+    if (!title || !url) {
+      return res.status(400).json({ error: "title and url are required" })
+    }
+
+    blog.author = author || blog.author
+    blog.title = title
+    blog.url = url
+    blog.likes = likes !== undefined ? likes : blog.likes
+
+    await blog.save()
+    res.json(blog)
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
 
 router.delete("/:id", blogFinder, async (req, res) => {
   try {
