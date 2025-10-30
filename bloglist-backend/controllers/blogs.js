@@ -1,21 +1,27 @@
 import { Router } from "express";
-import Blog from "../models/index.js";
+import { Blog, User } from "../models/index.js";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
 const router = Router();
+dotenv.config();
 
 const blogFinder = async (req, res, next) => {
-  const blog = await Blog.findByPk(req.params.id)
-  if (!blog) return res.status(404).json({ error: "Blog not found" })
-  req.blog = blog
-  next()
-}
+  const blog = await Blog.findByPk(req.params.id);
+  if (!blog) return res.status(404).json({ error: "Blog not found" });
+  req.blog = blog;
+  next();
+};
 
 router.get("/", async (req, res) => {
   try {
-    const blogs = await Blog.findAll();
-    blogs.forEach((blog) => {
-      console.log(
-        `${blog.id}. ${blog.title} by ${blog.author} (${blog.likes} likes)`
-      );
+    const blogs = await Blog.findAll({
+      // add to each note information about the user who added it
+      attributes: { exclude: ["userId"] },
+      include: {
+        model: User,
+        attributes: ["name"],
+      },
     });
     res.json(blogs);
   } catch (err) {
@@ -37,8 +43,7 @@ router.get("/:id", blogFinder, async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const { author, title, url, likes } = req.body;
-
-    // 可以加简单验证
+    const user = await User.findByPk(req.decodedToken.id);
     if (!title || !url) {
       return res.status(400).json({ error: "title and url are required" });
     }
@@ -47,7 +52,10 @@ router.post("/", async (req, res) => {
       author,
       title,
       url,
-      likes: likes || 0, // 默认0
+      likes: likes || 0,
+      // we did not make a change to the model that defines notes, but we can still add a user to note objects
+      userId: user.id,
+      date: new Date(),
     });
 
     res.status(201).json(newBlog);
@@ -58,32 +66,46 @@ router.post("/", async (req, res) => {
 
 router.put("/:id", blogFinder, async (req, res) => {
   try {
-    const { author, title, url, likes } = req.body
-    const blog = req.blog
+    const { author, title, url, likes } = req.body;
+    const blog = req.blog;
 
     if (!title || !url) {
-      return res.status(400).json({ error: "title and url are required" })
+      return res.status(400).json({ error: "title and url are required" });
     }
 
-    blog.author = author || blog.author
-    blog.title = title
-    blog.url = url
-    blog.likes = likes !== undefined ? likes : blog.likes
+    blog.author = author || blog.author;
+    blog.title = title;
+    blog.url = url;
+    blog.likes = likes !== undefined ? likes : blog.likes;
 
-    await blog.save()
-    res.json(blog)
+    await blog.save();
+    res.json(blog);
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    res.status(500).json({ error: err.message });
   }
-})
+});
 
 router.delete("/:id", blogFinder, async (req, res) => {
   try {
+    const decodedToken = req.decodedToken;
+    console.log("req.blog.userId", req.blog.userId);
+    console.log("decodedToken.id", decodedToken.id);
+
+    if (!decodedToken.id) {
+      return res.status(401).json({ error: "token missing or invalid" });
+    }
+
     if (!req.blog) {
       return res.status(404).json({ error: "Blog not found" });
     }
 
-    await blog.destroy();
+    if (req.blog.userId.toString() !== decodedToken.id.toString()) {
+      return res
+        .status(403)
+        .json({ error: "only the creator can delete this blog" });
+    }
+
+    await req.blog.destroy();
     res.status(204).end();
   } catch (err) {
     res.status(500).json({ error: err.message });
