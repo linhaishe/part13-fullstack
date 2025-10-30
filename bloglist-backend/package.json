@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "bloglist-backend was copy form part4 project 此项目将不会使用mongodb数据库，改用relational database - postgres",
   "main": "index.js",
+  "type": "module",
   "scripts": {
+    "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
