@@ -3,6 +3,7 @@ import { Blog, User } from "../models/index.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { Op } from "sequelize";
+import { sequelize } from "../utils/db.js";
 
 const router = Router();
 dotenv.config();
@@ -44,6 +45,7 @@ router.get("/", async (req, res) => {
         attributes: ["name"],
       },
       where,
+      order: sequelize.literal("likes DESC"),
     });
     res.json(blogs);
   } catch (err) {
