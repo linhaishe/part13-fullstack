@@ -1,10 +1,9 @@
-// db.js
 import dotenv from "dotenv";
 import { Sequelize, DataTypes } from "sequelize";
-
+import config from "./config.js";
 dotenv.config();
 
-export const sequelize = new Sequelize(process.env.DATABASE_URL, {
+export const sequelize = new Sequelize(config.DATABASE_URL, {
   dialect: "postgres",
   logging: false,
 });
@@ -43,5 +42,7 @@ export const connectDb = async () => {
     console.log("✅ Database connected");
   } catch (err) {
     console.error("❌ Unable to connect:", err);
+    return process.exit(1);
   }
+  return null;
 };
