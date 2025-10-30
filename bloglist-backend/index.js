@@ -1,24 +1,26 @@
-import dotenv from 'dotenv'
-import { Sequelize } from 'sequelize'
+import express from "express";
+import { Blog, connectDb } from "./db.js";
+import cors from 'cors';
 
-// 载入 .env 文件
-dotenv.config()
+const app = express();
 
-// 创建 Sequelize 实例
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
-  dialect: 'postgres', // 可选，明确指定数据库类型
-  logging: false,      // 不打印 SQL 日志（可选）
-})
+await connectDb();
 
-const main = async () => {
+app.use(cors());
+
+app.get("/api/blogs", async (req, res) => {
   try {
-    await sequelize.authenticate()
-    console.log('Connection has been established successfully.')
-  } catch (error) {
-    console.error('Unable to connect to the database:', error)
-  } finally {
-    await sequelize.close()
+    const blogs = await Blog.findAll();
+    blogs.forEach((blog) => {
+      console.log(
+        `${blog.id}. ${blog.title} by ${blog.author} (${blog.likes} likes)`
+      );
+    });
+    res.json(blogs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-}
+});
 
-main()
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

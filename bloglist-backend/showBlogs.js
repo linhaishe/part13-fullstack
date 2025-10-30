@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import { Sequelize, DataTypes } from 'sequelize'
+import { Sequelize, DataTypes, QueryTypes } from 'sequelize'
 
 // 连接数据库
 const sequelize = new Sequelize(process.env.DATABASE_URL)
@@ -30,14 +30,16 @@ const main = async () => {
     await sequelize.authenticate()
     console.log('✅ Connected to database')
 
-    // 查询所有博客
-    const blogs = await Blog.findAll()
+    // // 查询所有博客 option 1 using Sequelize
+    // const blogs = await Blog.findAll()
+    // console.log('📚 Blogs in database:')
+    // blogs.forEach(blog => {
+    //   console.log(`${blog.id}. ${blog.title} by ${blog.author} (${blog.likes} likes)`)
+    // })
 
-    // 打印结果
-    console.log('📚 Blogs in database:')
-    blogs.forEach(blog => {
-      console.log(`${blog.id}. ${blog.title} by ${blog.author} (${blog.likes} likes)`)
-    })
+    // option 2 SQL way
+    const blogs = await sequelize.query("SELECT * FROM blogs", { type: QueryTypes.SELECT })
+    console.log(blogs)
 
     await sequelize.close()
   } catch (error) {
