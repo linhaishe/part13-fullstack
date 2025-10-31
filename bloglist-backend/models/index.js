@@ -1,17 +1,11 @@
 import Blog from "./blog.js";
 import User from "./user.js";
-import UserMark from "./userMarks.js";
+import UserMarks from "./userMarks.js";
 
 User.hasMany(Blog);
 Blog.belongsTo(User);
 
-User.belongsToMany(Blog, { through: UserMark });
-Blog.belongsToMany(User, { through: UserMark });
+User.belongsToMany(Blog, { through: UserMarks, as: 'marked_blogs' })
+Blog.belongsToMany(User, { through: UserMarks, as: 'users_marked' })
 
-User.hasMany(UserMark, { foreignKey: "userId" });
-UserMark.belongsTo(User, { foreignKey: "userId" });
-
-Blog.hasMany(UserMark, { foreignKey: "blogId" });
-UserMark.belongsTo(Blog, { foreignKey: "blogId" });
-
-export { Blog, User, UserMark };
+export { Blog, User, UserMarks };

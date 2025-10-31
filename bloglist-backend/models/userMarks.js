@@ -1,9 +1,9 @@
 import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../utils/db.js";
 
-class UserMark extends Model {}
+class UserMarks extends Model {}
 
-UserMark.init(
+UserMarks.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -25,9 +25,8 @@ UserMark.init(
     sequelize,
     underscored: true,
     timestamps: false,
-    modelName: "UserMark",
-    tableName: "user_marks",
+    modelName: "user_marks",
   }
 );
 
-export default UserMark;
+export default UserMarks;

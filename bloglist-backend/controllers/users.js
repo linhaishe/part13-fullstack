@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { User, Blog, UserMark } from "../models/index.js";
+import { User, Blog } from "../models/index.js";
 const router = Router();
 
 router.get("/", async (req, res) => {
@@ -13,14 +13,12 @@ router.get("/", async (req, res) => {
         // through: { attributes: [] }, // 通过 UserMark 表，不返回额外字段
       },
       {
-        model: UserMark,
-        include: [
-          {
-            model: Blog,
-            attributes: ["id", "title", "author"],
-          },
-        ],
-        attributes: ["id"], // UserMark 自己的字段
+        model: Blog,
+        as: "marked_blogs",
+        attributes: { exclude: ["userId"] },
+        through: {
+          attributes: [],
+        },
       },
     ],
   });
