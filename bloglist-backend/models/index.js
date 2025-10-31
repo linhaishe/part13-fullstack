@@ -6,7 +6,8 @@ import User from "./user.js";
 // 我们在模型中定义 userId，但这通常没必要，因为下面的方式可以直接处理外键问题
 User.hasMany(Blog);
 Blog.belongsTo(User);
-await Blog.sync({ alter: true });
-await User.sync({ alter: true });
+
+// await Blog.sync({ alter: true });
+// await User.sync({ alter: true });
 
 export { Blog, User };

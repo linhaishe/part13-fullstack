@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 import { Router } from "express";
 import { User } from "../models/index.js";
 const router = Router();
@@ -17,6 +17,12 @@ router.post("/", async (request, response) => {
   if (!(user && passwordCorrect)) {
     return response.status(401).json({
       error: "invalid username or password",
+    });
+  }
+
+  if (user.disabled) {
+    return response.status(401).json({
+      error: "account disabled, please contact admin",
     });
   }
 
