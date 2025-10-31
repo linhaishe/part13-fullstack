@@ -1,15 +1,28 @@
 import { Router } from "express";
-import { User, Blog } from "../models/index.js";
+import { User, Blog, UserMark } from "../models/index.js";
 const router = Router();
 
 router.get("/", async (req, res) => {
   const users = await User.findAll({
     // Making a join query
-    include: {
-      model: Blog,
-      // removing the unnecessary field userId from the notes associated with the user
-      attributes: { exclude: ["userId"] },
-    },
+    include: [
+      {
+        model: Blog,
+        // removing the unnecessary field userId from the notes associated with the user
+        attributes: { exclude: ["userId"] },
+        // through: { attributes: [] }, // 通过 UserMark 表，不返回额外字段
+      },
+      {
+        model: UserMark,
+        include: [
+          {
+            model: Blog,
+            attributes: ["id", "title", "author"],
+          },
+        ],
+        attributes: ["id"], // UserMark 自己的字段
+      },
+    ],
   });
   res.json(users);
 });
