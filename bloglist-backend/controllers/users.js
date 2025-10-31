@@ -47,17 +47,30 @@ router.get("/:id", async (req, res) => {
         as: "marked_blogs",
         attributes: { exclude: ["userId"] },
         through: {
-          attributes: [],
+          attributes: ["id", "isRead"],
         },
-        include: {
-          model: User,
-          attributes: ["name"],
-        },
+        // include: {
+        //   model: User,
+        //   attributes: ["name"],
+        // },
       },
     ],
   });
   if (user) {
-    res.json(user);
+    const result = {
+      ...user.toJSON(),
+      marked_blogs: user.marked_blogs.map((blog) => ({
+        ...blog.toJSON(),
+        reading_status: [
+          {
+            read: blog.user_marks.isRead,
+            id: blog.user_marks.id,
+          },
+        ],
+        user_marks: undefined,
+      })),
+    };
+    res.json(result);
   } else {
     res.status(404).end();
   }

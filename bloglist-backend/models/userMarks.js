@@ -20,6 +20,10 @@ UserMarks.init(
       allowNull: false,
       references: { model: "blogs", key: "id" },
     },
+    isRead: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   },
   {
     sequelize,

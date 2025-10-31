@@ -17,6 +17,10 @@ export async function up({ context: queryInterface }) {
       allowNull: false,
       references: { model: "blogs", key: "id" },
     },
+    is_read: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   });
 }
 
