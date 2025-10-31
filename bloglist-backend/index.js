@@ -21,6 +21,11 @@ app.use("/api/author", authorsRouter);
 
 app.use((err, req, res, next) => {
   console.error(err);
+
+  if (err.name === "SequelizeValidationError") {
+    return res.status(400).json({ error: error.errors[0].message });
+  }
+
   res.status(500).json({ error: err.message });
 });
 

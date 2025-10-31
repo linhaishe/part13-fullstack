@@ -66,13 +66,14 @@ router.get("/:id", blogFinder, async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    const { author, title, url, likes } = req.body;
+    const { author, title, url, likes, year } = req.body;
     const user = await User.findByPk(req.decodedToken.id);
     if (!title || !url) {
       return res.status(400).json({ error: "title and url are required" });
     }
 
     const newBlog = await Blog.create({
+      year,
       author,
       title,
       url,
