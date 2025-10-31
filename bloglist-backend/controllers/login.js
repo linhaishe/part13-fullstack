@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { Router } from "express";
 import { User } from "../models/index.js";
+import { createToken, saveUserToken } from "../utils/tokenHelper.js";
 const router = Router();
 
 router.post("/", async (request, response) => {
@@ -31,7 +32,8 @@ router.post("/", async (request, response) => {
     id: user.id,
   };
 
-  const token = jwt.sign(userForToken, process.env.SECRET);
+  const token = createToken(user);
+  await saveUserToken(user.id, token);
 
   response
     .status(200)
