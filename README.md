@@ -7,8 +7,8 @@ env files needs following things:
 
 ```
 PORT=3001
-NODE_ENV=development
-TEST_MONGODB_URI=''
+DATABASE_URL=postgresql://postgres:mysecretpassword@localhost:5432/postgres
+SECRET=WEARESECRET
 ```
 
 for project:
